@@ -1,0 +1,45 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  lambda-micronaut-sample
+  Sample SAM Template for lambda-micronaut
+
+Globals:
+  Function:
+    Tracing: Active
+    CodeUri: build/libs/HandsOnOne-0.1-all.jar
+    Runtime: java17
+    Timeout: 30
+    MemorySize: 1024
+
+Resources:
+  MyApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: dev
+      Name: SM703 Hands-on-dev
+
+
+  HelloWorldFunctionDev:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: io.micronaut.function.aws.proxy.MicronautLambdaHandler
+      Policies:
+      Events:
+        GetHelloWorld:
+          Type: Api
+          Properties:
+            RestApiId: !Ref MyApi
+            Path: /
+            Method: get
+
+  HelloWorldFunctionLogGroupDev:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub "/aws/lambda/${HelloWorldFunctionDev}"
+      RetentionInDays: 7
+
+Outputs:
+  MicronautApiEndpoint:
+    Description: "API Gateway endpoint URL for Dev stage for Micronaut sample function"
+    Value: !Sub "https://${MyApi}.execute-api.${AWS::Region}.amazonaws.com/dev/"

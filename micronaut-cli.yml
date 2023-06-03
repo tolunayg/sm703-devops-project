@@ -1,0 +1,6 @@
+applicationType: default
+defaultPackage: tr.edu.metu.sm703
+testFramework: junit
+sourceLanguage: java
+buildTool: gradle
+features: [amazon-api-gateway, annotation-api, app-name, aws-lambda, gradle, jackson-databind, java, java-application, junit, logback, micronaut-build, readme, shade, x86, yaml]
