@@ -18,9 +18,6 @@ Resources:
     Properties:
       StageName: dev
       Name: SM703 Devops-project
-      Auth:
-        DefaultAuthorizer: NONE
-        AddDefaultAuthorizerToCorsPreflight: false
 
   AdditionFunctionDev:
     Type: AWS::Serverless::Function
@@ -28,11 +25,11 @@ Resources:
       Handler: io.micronaut.function.aws.proxy.MicronautLambdaHandler
       Policies:
       Events:
-        GetAddition:   # Changed the event name to GetAddition
+        GetAddition:
           Type: Api
           Properties:
             RestApiId: !Ref MyApi
-            Path: /
+            Path: /add/{num1}/{num2}
             Method: get
 
   AdditionFunctionLogGroupDev:
