@@ -20,7 +20,7 @@ Resources:
       Name: SM703 Devops-project
 
 
-  HelloWorldFunctionDev:
+  AdditionFunctionDev:
     Type: AWS::Serverless::Function
     Properties:
       Handler: io.micronaut.function.aws.proxy.MicronautLambdaHandler
@@ -33,10 +33,10 @@ Resources:
             Path: /
             Method: get
 
-  HelloWorldFunctionLogGroupDev:
+  AdditionFunctionLogGroupDev:
     Type: AWS::Logs::LogGroup
     Properties:
-      LogGroupName: !Sub "/aws/lambda/${HelloWorldFunctionDev}"
+      LogGroupName: !Sub "/aws/lambda/${AdditionFunctionDev}"
       RetentionInDays: 7
 
 Outputs:
