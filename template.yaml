@@ -7,7 +7,7 @@ Description: >
 Globals:
   Function:
     Tracing: Active
-    CodeUri: build/libs/HandsOnOne-0.1-all.jar
+    CodeUri: build/libs/DevopsProject-0.1-all.jar
     Runtime: java17
     Timeout: 30
     MemorySize: 1024
@@ -17,7 +17,7 @@ Resources:
     Type: AWS::Serverless::Api
     Properties:
       StageName: prod
-      Name: SM703 Hands-on-prod
+      Name: SM703 Devops-project
 
 
   HelloWorldFunctionProd:
