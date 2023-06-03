@@ -18,27 +18,6 @@ Resources:
     Properties:
       StageName: prod
       Name: SM703 Devops-project
-      Auth:
-        DefaultAuthorizer: NONE
-        AddDefaultAuthorizerToCorsPreflight: false
-      DefinitionBody:
-        swagger: "2.0"
-        info:
-          title: "Addition"
-        paths:
-          /add/{num1}/{num2}:
-            get:
-              responses:
-                '200':
-                  description: OK
-              x-amazon-apigateway-integration:
-                type: aws_proxy
-                uri: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${AdditionFunctionProd.Arn}/invocations
-                httpMethod: GET
-                passthroughBehavior: WHEN_NO_MATCH
-                responses:
-                  default:
-                    statusCode: '200'
 
   AdditionFunctionProd:
     Type: AWS::Serverless::Function
