@@ -33,7 +33,7 @@ Resources:
                   description: OK
               x-amazon-apigateway-integration:
                 type: aws_proxy
-                uri: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${AdditionFunctionDev.Arn}/invocations
+                uri: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${AdditionFunctionProd.Arn}/invocations
                 httpMethod: GET
                 passthroughBehavior: WHEN_NO_MATCH
                 responses:
@@ -50,7 +50,7 @@ Resources:
           Type: Api
           Properties:
             RestApiId: !Ref MyApi
-            Path: /
+            Path: /add/{num1}/{num2} # Updated the path to /add/{num1}/{num2}
             Method: get
 
   AdditionFunctionLogGroupProd:
