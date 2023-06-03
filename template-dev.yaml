@@ -50,7 +50,7 @@ Resources:
           Type: Api
           Properties:
             RestApiId: !Ref MyApi
-            Path: /add/{num1}/{num2}  # Updated the path to /add/{num1}/{num2}
+            Path: /
             Method: get
 
   AdditionFunctionLogGroupDev:
