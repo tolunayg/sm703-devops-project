@@ -1,8 +1,8 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
 Description: >
-  lambda-micronaut-sample
-  Sample SAM Template for lambda-micronaut
+  lambda-micronaut-addition
+  Addition of 2 integers, SAM Template for lambda-micronaut
 
 Globals:
   Function:
@@ -19,24 +19,23 @@ Resources:
       StageName: dev
       Name: SM703 Devops-project
 
-
-  HelloWorldFunctionDev:
+  AdditionFunctionDev:
     Type: AWS::Serverless::Function
     Properties:
       Handler: io.micronaut.function.aws.proxy.MicronautLambdaHandler
       Policies:
       Events:
-        GetHelloWorld:
+        GetAddition:
           Type: Api
           Properties:
             RestApiId: !Ref MyApi
-            Path: /
+            Path: /add/{num1}/{num2}
             Method: get
 
-  HelloWorldFunctionLogGroupDev:
+  AdditionFunctionLogGroupDev:
     Type: AWS::Logs::LogGroup
     Properties:
-      LogGroupName: !Sub "/aws/lambda/${HelloWorldFunctionDev}"
+      LogGroupName: !Sub "/aws/lambda/${AdditionFunctionDev}"
       RetentionInDays: 7
 
 Outputs:
