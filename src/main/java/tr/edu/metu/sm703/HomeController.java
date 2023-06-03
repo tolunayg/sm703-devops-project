@@ -1,14 +1,21 @@
 package tr.edu.metu.sm703;
+
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Get;
-import java.util.Collections;
+import io.micronaut.http.annotation.PathVariable;
+import java.util.HashMap;
 import java.util.Map;
 
 @Controller
 public class HomeController {
 
-    @Get
-    public Map<String, Object> index() {
-        return Collections.singletonMap("message", "Hello World");
+    @Get("/add/{num1}/{num2}")
+    public Map<String, Object> addNumbers(@PathVariable int num1, @PathVariable int num2) {
+        int sum = num1 + num2;
+        Map<String, Object> response = new HashMap<>();
+        response.put("num1", num1);
+        response.put("num2", num2);
+        response.put("sum", sum);
+        return response;
     }
 }
