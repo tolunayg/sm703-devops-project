@@ -40,12 +40,9 @@ jobs:
         with:
           arguments: build
 
-      - name: Build with Gradle
-        run: ./gradlew build sonarqube \
-          -Dsonar.projectKey=tolunayg_sm703-devops-project \
-          -Dsonar.organization=tolunayg \
-          -Dsonar.host.url=https://sonarcloud.io \
-          -Dsonar.login=${{ secrets.SONAR_TOKEN }}
+      - name: Build with Gradle and Run SonarQube analysis
+        run: |
+          ./gradlew build sonarqube -Dsonar.projectKey=tolunayg_sm703-devops-project -Dsonar.organization=tolunayg -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=${{ secrets.SONAR_TOKEN }}
 
       - name: Deploy with SAM
         run:  sam deploy --no-confirm-changeset --no-fail-on-empty-changeset --config-file samconfig-prod.toml
