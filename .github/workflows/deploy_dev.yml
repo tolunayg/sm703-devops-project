@@ -38,9 +38,9 @@ jobs:
           arguments: build
 
       - name: SonarCloud Scan
-          uses: sonarsource/sonarcloud-github-action@master
-          env:
-            SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        uses: sonarsource/sonarcloud-github-action@master
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
       - name: Deploy with SAM
         run:  sam deploy -t template-dev.yaml --no-confirm-changeset --no-fail-on-empty-changeset --config-file samconfig-dev.toml
