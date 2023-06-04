@@ -47,6 +47,8 @@ sonarqube {
         property "sonar.organization", "tolunayg"
         property "sonar.host.url", "https://sonarcloud.io"
         property "sonar.login", "1e469c3cd69482f75c96e307e0c338aeacf73040"
+        property "sonar.analysis.mode", "publish"
+        property "sonar.coverage.exclusions", "**/build/**"
     }
 }
 
