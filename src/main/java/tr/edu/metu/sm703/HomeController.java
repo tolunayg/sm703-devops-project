@@ -11,6 +11,11 @@ public class HomeController {
 
     @Get("/add/{num1}/{num2}")
     public Map<String, Object> addNumbers(@PathVariable int num1, @PathVariable int num2) {
+        // Check if num1 or num2 are invalid
+        if (num1 < 0 || num2 < 0) {
+            throw new IllegalArgumentException("Invalid input: num1 and num2 must be non-negative integers.");
+        }
+
         int sum = num1 + num2;
         Map<String, Object> response = new HashMap<>();
         response.put("num1", num1);
