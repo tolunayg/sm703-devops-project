@@ -21,11 +21,12 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
-      - name: Set up JDK 11
+      - name: Set up JDK 11 and SonarScanner CLI
         uses: actions/setup-java@v3
         with:
           java-version: '11'
           distribution: 'temurin'
+          sonar-scanner-cli: true
 
       - name: Install jq
         run: sudo apt-get install -y jq
