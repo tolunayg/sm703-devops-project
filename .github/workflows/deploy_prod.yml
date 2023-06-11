@@ -55,6 +55,10 @@ jobs:
           unzip sonar-scanner.zip
           export PATH=$PATH:${PWD}/sonar-scanner-4.6.0.2311-linux/bin
 
+      - name: Verify PATH
+        run: |
+          echo $PATH
+
       - name: Check SonarQube analysis results
         id: check-sonarqube-results
         run: |
