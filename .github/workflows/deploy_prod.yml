@@ -26,6 +26,10 @@ jobs:
         with:
           java-version: '11'
           distribution: 'temurin'
+
+      - name: Install jq
+        run: sudo apt-get install -y jq
+
       - name: change permission
         run: chmod +x gradlew
       - name: Configure AWS and SAM
@@ -43,6 +47,32 @@ jobs:
       - name: Build with Gradle and Run SonarQube analysis
         run: |
           ./gradlew build sonarqube -Dsonar.projectKey=tolunayg_sm703-devops-project -Dsonar.organization=tolunayg -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=${{ secrets.SONAR_TOKEN }}
+
+      - name: Check SonarQube analysis results
+        id: check-sonarqube-results
+        run: |
+          # Run SonarScanner CLI to retrieve analysis results
+          sonar-scanner \
+            -Dsonar.projectKey=tolunayg_sm703-devops-project \
+            -Dsonar.organization=tolunayg \
+            -Dsonar.host.url=https://sonarcloud.io \
+            -Dsonar.login=${{ secrets.SONAR_TOKEN }} \
+            -Dsonar.verbose=true \
+            -Dsonar.scanner.dumpToFile=sonarqube-report.json
+
+          # Parse the SonarQube analysis report
+          analysis_report=$(cat sonarqube-report.json)
+
+          # Check for critical or high-severity issues in the report
+          critical_issues=$(echo "$analysis_report" | jq '.issues[] | select(.severity == "CRITICAL")')
+          high_severity_issues=$(echo "$analysis_report" | jq '.issues[] | select(.severity == "HIGH")')
+
+          # Set the output variable 'analysis-status' to 'failed' if any critical or high-severity issues are found
+          if [ -n "$critical_issues" ] || [ -n "$high_severity_issues" ]; then
+            echo "::set-output name=analysis-status::failed"
+          else
+            echo "::set-output name=analysis-status::passed"
+          fi
 
       - name: Deploy with SAM
         run:  sam deploy --no-confirm-changeset --no-fail-on-empty-changeset --config-file samconfig-prod.toml
