@@ -60,7 +60,7 @@ jobs:
         with:
           category: "/language:${{ matrix.language }}"
           output: ./codeql/
-          queries: ./custom-query-codeql/custom-query.ql
+          query: ./custom-query-codeql/query-suite.qls
 
       - name: Print SARIF file
         run: |
