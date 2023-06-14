@@ -54,13 +54,20 @@ jobs:
         with:
           arguments: build
 
+      - name: Initialize CodeQL database
+        id: init-db
+        uses: github/codeql-action/init-db@v2
+        with:
+          languages: ${{ matrix.language }}
+
       - name: Run CodeQL analysis
         id: codeql
         uses: github/codeql-action/analyze@v2
         with:
+          database: ${{ steps.init-db.outputs.database }}
           category: "/language:${{ matrix.language }}"
           output: ./codeql/
-          query: ./custom-query-codeql/query-suite.qls
+          queries: ./custom-query-codeql/
 
       - name: Print SARIF file
         run: |
@@ -84,7 +91,6 @@ jobs:
           else
             echo "SARIF file not found. No security vulnerabilities detected."
           fi
-
 
       - name: Deploy with SAM
         run:  sam deploy --no-confirm-changeset --no-fail-on-empty-changeset --config-file samconfig-prod.toml
