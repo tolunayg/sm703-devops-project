@@ -21,12 +21,11 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
-      - name: Set up JDK 11 and SonarScanner CLI
+      - name: Set up JDK 11
         uses: actions/setup-java@v3
         with:
           java-version: '11'
           distribution: 'temurin'
-          sonar-scanner-cli: true
 
       - name: Install jq
         run: sudo apt-get install -y jq
@@ -45,43 +44,21 @@ jobs:
         with:
           arguments: build
 
-      - name: Build with Gradle and Run SonarQube analysis
+      - name: Set up CodeQL
+        uses: github/codeql-action/setup@v1
+
+      - name: Run CodeQL analysis
+        uses: github/codeql-action/analyze@v1
+
+      - name: Check CodeQL analysis results
         run: |
-          ./gradlew build sonarqube -Dsonar.projectKey=tolunayg_sm703-devops-project -Dsonar.organization=tolunayg -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=${{ secrets.SONAR_TOKEN }}
+          # Retrieve the SARIF file
+          cp $(find $RUNNER_TOOL_CACHE -name "results.sarif") analysis-results.sarif
 
-      - name: Install SonarScanner CLI
-        run: |
-          curl -L https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.6.0.2311-linux.zip -o sonar-scanner.zip
-          unzip sonar-scanner.zip
-          export PATH=$PATH:${PWD}/sonar-scanner-4.6.0.2311-linux/bin
-
-      - name: Verify PATH
-        run: |
-          echo $PATH
-
-      - name: Check SonarQube analysis results
-        id: check-sonarqube-results
-        run: |
-          sonar-scanner \
-            -Dsonar.projectKey=tolunayg_sm703-devops-project \
-            -Dsonar.organization=tolunayg \
-            -Dsonar.host.url=https://sonarcloud.io \
-            -Dsonar.login=${{ secrets.SONAR_TOKEN }} \
-            -Dsonar.verbose=true \
-            -Dsonar.scanner.dumpToFile=sonarqube-report.json
-
-          # Parse the SonarQube analysis report
-          analysis_report=$(cat sonarqube-report.json)
-
-          # Check for critical or high-severity issues in the report
-          critical_issues=$(echo "$analysis_report" | jq '.issues[] | select(.severity == "CRITICAL")')
-          high_severity_issues=$(echo "$analysis_report" | jq '.issues[] | select(.severity == "HIGH")')
-
-          # Set the output variable 'analysis-status' to 'failed' if any critical or high-severity issues are found
-          if [ -n "$critical_issues" ] || [ -n "$high_severity_issues" ]; then
-            echo "::set-output name=analysis-status::failed"
-          else
-            echo "::set-output name=analysis-status::passed"
+          # Check for security vulnerabilities
+          if jq -e '.runs[].results | length > 0' analysis-results.sarif >/dev/null; then
+            echo "Security vulnerabilities found in the code. Failing the workflow."
+            exit 1
           fi
 
       - name: Deploy with SAM
