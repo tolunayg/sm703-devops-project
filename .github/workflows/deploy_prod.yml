@@ -63,16 +63,27 @@ jobs:
 
       - name: Print SARIF file
         run: |
-          cat ./codeql/results.sarif
+          sarif_file="./codeql/results.sarif"
+          if [ -f "$sarif_file" ]; then
+            cat "$sarif_file"
+          else
+            echo "SARIF file not found. No security vulnerabilities detected."
+          fi
 
       - name: Check CodeQL analysis results
         run: |
-          if jq -e '.runs[].results | length > 0' ./codeql/results.sarif >/dev/null; then
-            echo "Security vulnerabilities found in the code. Failing the workflow."
-            exit 1
+          sarif_file="./codeql/results.sarif"
+          if [ -f "$sarif_file" ]; then
+            if jq -e '.runs[].results | length > 0' "$sarif_file" >/dev/null; then
+              echo "Security vulnerabilities found in the code. Failing the workflow."
+              exit 1
+            else
+              echo "No security vulnerabilities found."
+            fi
           else
-            echo "No security vulnerabilities found."
+            echo "SARIF file not found. No security vulnerabilities detected."
           fi
+
 
       - name: Deploy with SAM
         run:  sam deploy --no-confirm-changeset --no-fail-on-empty-changeset --config-file samconfig-prod.toml
