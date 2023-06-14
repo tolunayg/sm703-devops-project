@@ -55,19 +55,18 @@ jobs:
           arguments: build
 
       - name: Run CodeQL analysis
+        id: codeql
         uses: github/codeql-action/analyze@v2
         with:
-          category: "/language:${{matrix.language}}"
+          category: "/language:${{ matrix.language }}"
 
       - name: Check CodeQL analysis results
         run: |
-          # Retrieve the SARIF file
-          cp "$(find $RUNNER_TOOL_CACHE -name 'results.sarif')" analysis-results.sarif
-
-          # Check for security vulnerabilities
-          if jq -e '.runs[].results | length > 0' analysis-results.sarif >/dev/null; then
+          if jq -e '.runs[].results | length > 0' ${{ steps.codeql.outputs.sarif }} >/dev/null; then
             echo "Security vulnerabilities found in the code. Failing the workflow."
             exit 1
+          else
+            echo "No security vulnerabilities found."
           fi
 
       - name: Deploy with SAM
