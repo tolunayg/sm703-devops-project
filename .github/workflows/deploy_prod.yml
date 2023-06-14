@@ -59,14 +59,15 @@ jobs:
         uses: github/codeql-action/analyze@v2
         with:
           category: "/language:${{ matrix.language }}"
+          output: ./codeql/
 
       - name: Print SARIF file
         run: |
-          cat ${{ steps.codeql.outputs.sarif }}
+          cat ./codeql/results.sarif
 
       - name: Check CodeQL analysis results
         run: |
-          if jq -e '.runs[].results | length > 0' ${{ steps.codeql.outputs.sarif }} >/dev/null; then
+          if jq -e '.runs[].results | length > 0' ./codeql/results.sarif >/dev/null; then
             echo "Security vulnerabilities found in the code. Failing the workflow."
             exit 1
           else
