@@ -19,6 +19,17 @@ public class HomeController {
         return userData;
     }
 
+    @Get("/add/{num1}/{num2}")
+    public Map<String, Object> addNumbers(@PathVariable int num1, @PathVariable int num2) {
+        // Perform the addition operation
+        int sum = num1 + num2;
+        Map<String, Object> response = new HashMap<>();
+        response.put("num1", num1);
+        response.put("num2", num2);
+        response.put("sum", sum);
+        return response;
+    }
+
     private Map<String, Object> executeQuery(String query) {
         // Simulated method to execute the SQL query and fetch data
         // This method is not implemented for simplicity
