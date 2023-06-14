@@ -9,25 +9,22 @@ import java.util.Map;
 @Controller
 public class HomeController {
 
-    @Get("/add/{num1}/{num2}")
-    public Map<String, Object> addNumbers(@PathVariable int num1, @PathVariable int num2) {
-        String username = "admin";
-        String password = "password123";
+    @Get("/users/{id}")
+    public Map<String, Object> getUserById(@PathVariable String id) {
+        // Vulnerability: Directly concatenating user input into the SQL query
+        String query = "SELECT * FROM users WHERE id = " + id;
 
-        // Check if the provided username and password match the hardcoded credentials
-        if (username.equals("admin") && password.equals("password123")) {
-            // Perform the addition operation
-            int sum = num1 + num2;
-            Map<String, Object> response = new HashMap<>();
-            response.put("num1", num1);
-            response.put("num2", num2);
-            response.put("sum", sum);
-            return response;
-        } else {
-            // Return an error message if the credentials are incorrect
-            Map<String, Object> errorResponse = new HashMap<>();
-            errorResponse.put("error", "Invalid credentials");
-            return errorResponse;
-        }
+        // Execute the query and return the user data
+        Map<String, Object> userData = executeQuery(query);
+        return userData;
+    }
+
+    private Map<String, Object> executeQuery(String query) {
+        // Simulated method to execute the SQL query and fetch data
+        // This method is not implemented for simplicity
+        // ...
+        // Vulnerability: SQL Injection can occur if 'id' parameter is not properly sanitized
+        // ...
+        return new HashMap<>();
     }
 }
