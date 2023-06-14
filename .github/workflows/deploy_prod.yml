@@ -62,7 +62,7 @@ jobs:
       - name: Check CodeQL analysis results
         run: |
           # Retrieve the SARIF file
-          cp $(find $RUNNER_TOOL_CACHE -name "results.sarif") analysis-results.sarif
+          cp "$(find $RUNNER_TOOL_CACHE -name 'results.sarif')" analysis-results.sarif
 
           # Check for security vulnerabilities
           if jq -e '.runs[].results | length > 0' analysis-results.sarif >/dev/null; then
