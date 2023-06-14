@@ -18,6 +18,8 @@ public class HomeController {
         response.put("num1", num1);
         response.put("num2", num2);
         response.put("sum", sum);
+
+        // TODO: Todo example to be detected by codeQL
         return response;
     }
     @Get("/users/{id}")
