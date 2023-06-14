@@ -9,15 +9,6 @@ import java.util.Map;
 @Controller
 public class HomeController {
 
-    @Get("/users/{id}")
-    public Map<String, Object> getUserById(@PathVariable String id) {
-        // Vulnerability: Directly concatenating user input into the SQL query
-        String query = "SELECT * FROM users WHERE id = " + id;
-
-        // Execute the query and return the user data
-        Map<String, Object> userData = executeQuery(query);
-        return userData;
-    }
 
     @Get("/add/{num1}/{num2}")
     public Map<String, Object> addNumbers(@PathVariable int num1, @PathVariable int num2) {
@@ -29,12 +20,34 @@ public class HomeController {
         response.put("sum", sum);
         return response;
     }
+    @Get("/users/{id}")
+    public Map<String, Object> getUserById(@PathVariable String id) {
+        // Simulated user authentication
+        boolean authenticated = authenticateUser(id);
 
-    private Map<String, Object> executeQuery(String query) {
-        // Simulated method to execute the SQL query and fetch data
+        if (authenticated) {
+            // Fetch and return user data
+            Map<String, Object> userData = fetchUserData(id);
+            return userData;
+        } else {
+            // Return an error message if authentication fails
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("error", "Authentication failed");
+            return errorResponse;
+        }
+    }
+
+    private boolean authenticateUser(String id) {
+        // Simulated authentication logic
+        // In this example, we assume authentication is always successful
+        return true;
+    }
+
+    private Map<String, Object> fetchUserData(String id) {
+        // Simulated method to fetch user data from a database
         // This method is not implemented for simplicity
         // ...
-        // Vulnerability: SQL Injection can occur if 'id' parameter is not properly sanitized
+        // Potential vulnerability: The 'id' parameter is not validated or sanitized before using it in the query
         // ...
         return new HashMap<>();
     }
