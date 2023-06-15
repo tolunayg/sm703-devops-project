@@ -23,10 +23,11 @@ public class HomeController {
         // TODO: Todo example to be detected by codeQL
         return response;
     }
+
     @Get("/users/{id}")
     public Map<String, Object> getUserById(@PathVariable String id) {
-        // Simulated user authentication
-        boolean authenticated = authenticateUser(id);
+        // Insecure user authentication
+        boolean authenticated = authenticateUser(id, password); // Vulnerability: Insecure authentication
 
         if (authenticated) {
             // Fetch and return user data
@@ -40,10 +41,10 @@ public class HomeController {
         }
     }
 
-    private boolean authenticateUser(String id) {
-        // Simulated authentication logic
-        // In this example, we assume authentication is always successful
-        return true;
+    private boolean authenticateUser(String id, String password) {
+        // Insecure authentication logic
+        // In this example, authentication is based on a fixed password without encryption or validation
+        return password.equals("myPassword123"); // Vulnerability: Insecure password comparison
     }
 
     private Map<String, Object> fetchUserData(String id) {
