@@ -9,6 +9,7 @@ import java.util.Map;
 @Controller
 public class HomeController {
 
+    private String password = "myPassword123"; // Vulnerability: Storing password in plain text
 
     @Get("/add/{num1}/{num2}")
     public Map<String, Object> addNumbers(@PathVariable int num1, @PathVariable int num2) {
