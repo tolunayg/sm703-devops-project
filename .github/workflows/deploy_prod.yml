@@ -38,34 +38,21 @@ jobs:
         run: |
           ./gradlew build sonarqube -Dsonar.projectKey=tolunayg_sm703-devops-project -Dsonar.organization=tolunayg -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=${{ secrets.SONAR_TOKEN }}
 
-      - name: Run OWASP Dependency Check
-        run: ./gradlew dependencyCheckAnalyze
-        continue-on-error: true
 
-      - name: Check OWASP Dependency Check results
-        id: check-results
+      - name: Check SonarCloud quality gate
         run: |
-          dependency_check_report="./build/reports/dependency-check-report.html"
-          if [ -f "$dependency_check_report" ]; then
-            echo "OWASP Dependency Check report found. Uploading..."
-            echo "::set-output name=dependency-check-report-path::$dependency_check_report"
-            vulnerable_count=$(grep -c '<vulnerability' "$dependency_check_report")
-            if [[ $vulnerable_count -gt 0 ]]; then
-              echo "OWASP Dependency Check found $vulnerable_count vulnerabilities. Failing the build."
-              exit 1
-            fi
-          else
-            echo "OWASP Dependency Check report not found."
+          sonar_project_key="tolunayg_sm703-devops-project"
+          sonar_organization="tolunayg"
+          sonar_host_url="https://sonarcloud.io"
+          sonar_token="${{ secrets.SONAR_TOKEN }}"
+
+          response=$(curl -s -u "${sonar_token}:" "${sonar_host_url}/api/qualitygates/project_status?projectKey=${sonar_project_key}&organization=${sonar_organization}")
+          status=$(echo "$response" | jq -r '.projectStatus.status')
+
+          if [[ "$status" != "OK" ]]; then
+            echo "SonarCloud quality gate check failed. Failing the build."
             exit 1
           fi
-
-      - name: Upload OWASP Dependency Check report
-        if: ${{ always() }}
-        uses: actions/upload-artifact@v2
-        with:
-          name: dependency-check-report
-          path: ${{ steps.check-results.outputs.dependency-check-report-path }}
-
 
       - name: Deploy with SAM
         run:  sam deploy --no-confirm-changeset --no-fail-on-empty-changeset --config-file samconfig-prod.toml
