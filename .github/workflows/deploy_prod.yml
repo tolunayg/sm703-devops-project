@@ -54,20 +54,23 @@ jobs:
         with:
           arguments: build
 
+      - name: Checkout CodeQL action
+        uses: actions/checkout@v3
+        with:
+          repository: github/codeql-action
+          ref: v2
+
       - name: Initialize CodeQL database
         id: init-db
-        uses: github/codeql-action/init-db@v2
-        with:
-          languages: ${{ matrix.language }}
+        uses: ./codeql-action/init-db
 
       - name: Run CodeQL analysis
         id: codeql
-        uses: github/codeql-action/analyze@v2
+        uses: ./codeql-action/analyze
         with:
           database: ${{ steps.init-db.outputs.database }}
           category: "/language:${{ matrix.language }}"
           output: ./codeql/
-          queries: ./custom-query-codeql/
 
       - name: Print SARIF file
         run: |
