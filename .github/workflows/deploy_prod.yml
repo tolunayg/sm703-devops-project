@@ -40,6 +40,7 @@ jobs:
 
       - name: Run OWASP Dependency Check
         run: ./gradlew dependencyCheckAnalyze
+        continue-on-error: true
 
       - name: Check OWASP Dependency Check results
         id: check-results
@@ -59,7 +60,7 @@ jobs:
           fi
 
       - name: Upload OWASP Dependency Check report
-        if: ${{ failure() }}
+        if: ${{ always() }}
         uses: actions/upload-artifact@v2
         with:
           name: dependency-check-report
