@@ -13,7 +13,7 @@ public class HomeController {
     public Map<String, Object> addNumbers(@PathVariable int num1, @PathVariable int num2) {
         // Perform the addition operation
         int sum = num1 + num2;
-        System.out.println("New addition request! Adding " + num1 + " " + num2 ". Result is: " + sum);
+        System.out.println("New addition request! Adding " + num1 + " " + num2 + ". Result is: " + sum);
         Map<String, Object> response = new HashMap<>();
         response.put("num1", num1);
         response.put("num2", num2);
