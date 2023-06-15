@@ -42,6 +42,7 @@ jobs:
         run: ./gradlew dependencyCheckAnalyze
 
       - name: Check OWASP Dependency Check results
+        id: check-results
         run: |
           dependency_check_report="./build/reports/dependency-check-report.html"
           if [ -f "$dependency_check_report" ]; then
@@ -54,14 +55,16 @@ jobs:
             fi
           else
             echo "OWASP Dependency Check report not found."
+            exit 1
           fi
 
       - name: Upload OWASP Dependency Check report
-        if: failure()
+        if: ${{ failure() }}
         uses: actions/upload-artifact@v2
         with:
           name: dependency-check-report
           path: ${{ steps.check-results.outputs.dependency-check-report-path }}
+
 
       - name: Deploy with SAM
         run:  sam deploy --no-confirm-changeset --no-fail-on-empty-changeset --config-file samconfig-prod.toml
