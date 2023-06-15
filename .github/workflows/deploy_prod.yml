@@ -55,34 +55,4 @@ jobs:
           fi
 
       - name: Deploy with SAM
-        run: |
-          sam deploy --no-confirm-changeset --no-fail-on-empty-changeset --config-file samconfig-prod.toml
-          sam_app_name=$(grep -oP '(?<=Successfully created/updated stack - ).*' sam_deploy_output.txt | awk '{print $1}')
-          echo "::set-output name=sam_app_name::$sam_app_name"
-
-      - name: Check CloudWatch Alarm
-        run: |
-          sam_app_name="${{ steps.sam_deploy.outputs.sam_app_name }}"
-
-          alarm_name="$sam_app_name"
-
-          aws cloudwatch describe-alarms --alarm-names "$alarm_name" --query "MetricAlarms[?AlarmName=='$alarm_name']" --output json > /tmp/alarm
-
-          exists=$(jq '. | length' /tmp/alarm)
-
-          if [[ $exists -eq 0 ]]; then
-            echo "CloudWatch alarm doesn't exist. Creating a new alarm."
-            aws cloudwatch put-metric-alarm \
-              --alarm-name "$alarm_name" \
-              --alarm-description "Invocation Count Alarm" \
-              --namespace AWS/Lambda \
-              --metric-name Invocations \
-              --dimensions Name=FunctionName,Value="$sam_app_name" \
-              --statistic Sum \
-              --period 300 \
-              --threshold 1 \
-              --evaluation-periods 1 \
-              --comparison-operator GreaterThanThreshold
-          else
-            echo "CloudWatch alarm exists."
-          fi
+        run:  sam deploy --no-confirm-changeset --no-fail-on-empty-changeset --config-file samconfig-prod.toml
