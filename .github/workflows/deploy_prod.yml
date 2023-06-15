@@ -1,15 +1,9 @@
-# This workflow uses actions that are not certified by GitHub.
-# They are provided by a third-party and are governed by
-# separate terms of service, privacy policy, and support
-# documentation.
-# This workflow will build a Java project with Gradle and cache/restore any dependencies to improve the workflow execution time
-# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-java-with-gradle
-
 name: Java CI with Gradle to AWS - Production
 
 on:
   push:
-    branches: master
+    branches:
+      - master
 
 permissions:
   contents: read
@@ -49,14 +43,25 @@ jobs:
 
       - name: Check OWASP Dependency Check results
         run: |
-          dependency_check_report="./build/reports/dependency-check-report.xml"
+          dependency_check_report="./build/reports/dependency-check-report.html"
           if [ -f "$dependency_check_report" ]; then
+            echo "OWASP Dependency Check report found. Uploading..."
+            echo "::set-output name=dependency-check-report-path::$dependency_check_report"
             vulnerable_count=$(grep -c '<vulnerability' "$dependency_check_report")
             if [[ $vulnerable_count -gt 0 ]]; then
               echo "OWASP Dependency Check found $vulnerable_count vulnerabilities. Failing the build."
               exit 1
             fi
+          else
+            echo "OWASP Dependency Check report not found."
           fi
+
+      - name: Upload OWASP Dependency Check report
+        if: failure()
+        uses: actions/upload-artifact@v2
+        with:
+          name: dependency-check-report
+          path: ${{ steps.check-results.outputs.dependency-check-report-path }}
 
       - name: Deploy with SAM
         run:  sam deploy --no-confirm-changeset --no-fail-on-empty-changeset --config-file samconfig-prod.toml
