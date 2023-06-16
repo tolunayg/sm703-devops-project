@@ -22,7 +22,7 @@ public class HomeController {
         Map<String, Object> response = new HashMap<>();
         response.put("num1", num1);
         response.put("num2", num2);
-        response.put("sum of two numbers", sum);
+        response.put("sumOfNumbers", sum);
 
         return response;
     }

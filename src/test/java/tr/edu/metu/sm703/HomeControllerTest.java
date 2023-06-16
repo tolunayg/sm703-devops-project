@@ -54,10 +54,10 @@ public class HomeControllerTest {
 
         assertEquals(2, responseBody.get("num1"));
         assertEquals(3, responseBody.get("num2"));
-        assertEquals(5, responseBody.get("sum"));
+        assertEquals(5, responseBody.get("sumOfNumbers"));
 
         assertTrue(responseBody.containsKey("num1"));
         assertTrue(responseBody.containsKey("num2"));
-        assertTrue(responseBody.containsKey("sum"));
+        assertTrue(responseBody.containsKey("sumOfNumbers"));
     }
 }
