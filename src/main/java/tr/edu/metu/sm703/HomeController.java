@@ -17,7 +17,7 @@ public class HomeController {
     @Get("/add/{num1}/{num2}")
     public Map<String, Object> addNumbers(@PathVariable int num1, @PathVariable int num2) {
         // Perform the addition operation
-        int sum = num1 + num2;
+        int sum = num1 - num2;
         logger.info("New addition request! Adding {} {}. Result is: {}", num1, num2, sum);
         Map<String, Object> response = new HashMap<>();
         response.put("num1", num1);
