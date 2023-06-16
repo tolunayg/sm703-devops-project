@@ -24,6 +24,9 @@ public class HomeController {
         response.put("num2", num2);
         response.put("sumOfNumbers", sum);
 
+        boolean isFirstNumberBigger = (num1 > num2);
+        response.put("isFirstNumberBigger", isFirstNumberBigger);
+
         return response;
     }
 
