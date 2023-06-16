@@ -1,9 +1,9 @@
-name: Java CI with Gradle to AWS - Development
+name: Java CI with Gradle to AWS - QA Branch
 
 on:
   push:
     branches:
-      - development
+      - qa
 
 permissions:
   contents: read
@@ -58,4 +58,4 @@ jobs:
           fi
 
       - name: Deploy with SAM
-        run:  sam deploy --no-confirm-changeset --no-fail-on-empty-changeset --config-file samconfig-dev.toml
+        run:  sam deploy --no-confirm-changeset --no-fail-on-empty-changeset --config-file samconfig-qa.toml
