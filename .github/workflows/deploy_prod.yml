@@ -1,15 +1,9 @@
-# This workflow uses actions that are not certified by GitHub.
-# They are provided by a third-party and are governed by
-# separate terms of service, privacy policy, and support
-# documentation.
-# This workflow will build a Java project with Gradle and cache/restore any dependencies to improve the workflow execution time
-# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-java-with-gradle
-
 name: Java CI with Gradle to AWS - Production
 
 on:
   push:
-    branches: master
+    branches:
+      - master
 
 permissions:
   contents: read
@@ -39,5 +33,26 @@ jobs:
         uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
         with:
           arguments: build
+
+      - name: Build with Gradle and Run SonarQube analysis
+        run: |
+          ./gradlew build sonarqube -Dsonar.projectKey=tolunayg_sm703-devops-project -Dsonar.organization=tolunayg -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=${{ secrets.SONAR_TOKEN }}
+
+
+      - name: Check SonarCloud quality gate
+        run: |
+          sonar_project_key="tolunayg_sm703-devops-project"
+          sonar_organization="tolunayg"
+          sonar_host_url="https://sonarcloud.io"
+          sonar_token="${{ secrets.SONAR_TOKEN }}"
+
+          response=$(curl -s -u "${sonar_token}:" "${sonar_host_url}/api/qualitygates/project_status?projectKey=${sonar_project_key}&organization=${sonar_organization}")
+          status=$(echo "$response" | jq -r '.projectStatus.status')
+
+          if [[ "$status" != "OK" ]]; then
+            echo "SonarCloud quality gate check failed. Failing the build."
+            exit 1
+          fi
+
       - name: Deploy with SAM
         run:  sam deploy --no-confirm-changeset --no-fail-on-empty-changeset --config-file samconfig-prod.toml

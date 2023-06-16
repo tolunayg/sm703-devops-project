@@ -1,0 +1,10 @@
+// query-suite.qls
+
+import "./custom-query-codeql/todocomment.ql"
+
+// Include the default CodeQL queries
+import semmle.codeql
+
+// Specify the queries to be included in the suite
+from custom_query // Replace with the appropriate module name from your custom query file
+select *

@@ -36,5 +36,11 @@ jobs:
         uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
         with:
           arguments: build
+
+      - name: SonarCloud Scan
+        uses: sonarsource/sonarcloud-github-action@master
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
       - name: Deploy with SAM
         run:  sam deploy -t template-dev.yaml --no-confirm-changeset --no-fail-on-empty-changeset --config-file samconfig-dev.toml
