@@ -1,0 +1,44 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  lambda-micronaut-addition
+  Addition of 2 integers, SAM Template for lambda-micronaut
+
+Globals:
+  Function:
+    Tracing: Active
+    CodeUri: build/libs/DevopsProject-0.1-all.jar
+    Runtime: java17
+    Timeout: 30
+    MemorySize: 1024
+
+Resources:
+  MyApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: qa
+      Name: SM703 Devops-project
+
+  AdditionFunctionQA:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: io.micronaut.function.aws.proxy.MicronautLambdaHandler
+      Policies:
+      Events:
+        GetAddition:
+          Type: Api
+          Properties:
+            RestApiId: !Ref MyApi
+            Path: /add/{num1}/{num2}
+            Method: get
+
+  AdditionFunctionLogGroupQA:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub "/aws/lambda/${AdditionFunctionQA}"
+      RetentionInDays: 7
+
+Outputs:
+  MicronautApiEndpoint:
+    Description: "API Gateway endpoint URL for QA stage for Micronaut sample function"
+    Value: !Sub "https://${MyApi}.execute-api.${AWS::Region}.amazonaws.com/qa/"

@@ -58,4 +58,4 @@ jobs:
           fi
 
       - name: Deploy with SAM
-        run:  sam deploy --no-confirm-changeset --no-fail-on-empty-changeset --config-file samconfig-dev.toml
+        run: sam deploy -t template-dev.yaml --no-confirm-changeset --no-fail-on-empty-changeset --config-file samconfig-dev.toml
