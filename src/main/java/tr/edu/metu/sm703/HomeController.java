@@ -23,6 +23,7 @@ public class HomeController {
         response.put("num1", num1);
         response.put("num2", num2);
         response.put("sum", sum);
+        response.put("hello", "Hello");
 
         return response;
     }
